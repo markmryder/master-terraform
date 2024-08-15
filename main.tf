@@ -80,14 +80,21 @@ resource "aws_default_security_group" "default_sec_group" {
   }
 }
 
+
 resource "aws_instance" "my_vm" {
-  ami = "ami-0b72821e2f351e396"
+  ami = "ami-0c8e23f950c7725b9"
   instance_type = "t2.micro"
   subnet_id = aws_subnet.web.id
   vpc_security_group_ids = [aws_default_security_group.default_sec_group.id]
   associate_public_ip_address = true
-  key_name = "Production ssh key"
+  key_name = aws_key_pair.test_ssh_key.key_name
   tags = {
     "Name" = "My EC2 instance"
   }
+}
+
+resource "aws_key_pair" "test_ssh_key" {
+  key_name = "testing_ssh_key"
+  public_key = file(var.public_key_location)
+  
 }
