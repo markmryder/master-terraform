@@ -82,7 +82,7 @@ resource "aws_default_security_group" "default_sec_group" {
 
 
 resource "aws_instance" "my_vm" {
-  ami = "ami-0c8e23f950c7725b9"
+  ami = data.aws_ami.latest_amazon_linux2.id
   instance_type = "t2.micro"
   subnet_id = aws_subnet.web.id
   vpc_security_group_ids = [aws_default_security_group.default_sec_group.id]
@@ -97,4 +97,17 @@ resource "aws_key_pair" "test_ssh_key" {
   key_name = "testing_ssh_key"
   public_key = file(var.public_key_location)
   
+}
+
+data "aws_ami" "latest_amazon_linux2" {
+  owners = ["amazon"]
+  most_recent = true
+  filter{
+    name = "name"
+    values = ["amzn2-ami-kernel-*-x86_64-gp2"]
+  }
+  filter {
+    name = "architecture"
+    values=["x86_64"]
+  }
 }
